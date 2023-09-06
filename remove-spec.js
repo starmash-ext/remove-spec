@@ -1,14 +1,24 @@
 !function() {
 
-  SWAM.on("gameRunning", function() {
+  SWAM.on("gameRunning",async function () {
     const INITIAL_EXTRALATENCY = 0;
+    
+    let lowPings = []
+    const isBot = player => player.name.indexOf('[bot] ') === 0 && lowPings.indexOf(player.id) >= 0
+
+    const prevUIUpdateScore = UI.updateScore;
+    UI.updateScore = function(On) {
+      lowPings = On.scores.filter(p => p.ping < 10).map(p => p.id)
+      prevUIUpdateScore(On)
+    }
+    
     UI.updateStats = function(Bt) { // same code from engine.js
       let Gt = "";
       if (game.gameType == SWAM.GAME_TYPE.CTF) {
         let Ht = 0
           , jt = 0;
         forEachPlayer(Wt=>{
-          if (!Wt.removedFromMap) { // new code
+          if (!Wt.removedFromMap && !isBot(Wt)) { // new code
             1 == Wt.team ? Ht++ : jt++
           }}
         ),
