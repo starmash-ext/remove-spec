@@ -46,7 +46,7 @@
       id: "remove-spec",
       description: "Removes spectators from CTF count",
       author: "Debug",
-      version: "1.2"
+      version: "1.3"
   });
 
 }();
