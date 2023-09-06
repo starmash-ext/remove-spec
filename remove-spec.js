@@ -3,12 +3,14 @@
   SWAM.on("gameRunning",async function () {
     const INITIAL_EXTRALATENCY = 0;
     
-    let lowPings = []
-    const isBot = player => player.name.indexOf('[bot] ') === 0 && lowPings.indexOf(player.id) >= 0
+    let lowPings = {}
+    const isBot = player => player.name.indexOf('[bot] ') === 0 && lowPings[player.id]
 
     const prevUIUpdateScore = UI.updateScore;
     UI.updateScore = function(On) {
-      lowPings = On.scores.filter(p => p.ping < 10).map(p => p.id)
+      On.scores.filter(p => p.ping <= 2).forEach(p => {
+        lowPings[p.id] = true
+      })
       prevUIUpdateScore(On)
     }
     
@@ -18,7 +20,7 @@
         let Ht = 0
           , jt = 0;
         forEachPlayer(Wt=>{
-          if (!Wt.removedFromMap && Wt.status === 0 && !isBot(Wt)) { // new code
+          if (!Wt.removedFromMap && !isBot(Wt) && Wt.team < 100 /*remove server*/) { // new code
             1 == Wt.team ? Ht++ : jt++
           }}
         ),
