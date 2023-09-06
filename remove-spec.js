@@ -18,7 +18,7 @@
         let Ht = 0
           , jt = 0;
         forEachPlayer(Wt=>{
-          if (!Wt.removedFromMap && !isBot(Wt)) { // new code
+          if (!Wt.removedFromMap && Wt.status === 0 && !isBot(Wt)) { // new code
             1 == Wt.team ? Ht++ : jt++
           }}
         ),
@@ -44,7 +44,7 @@
       id: "remove-spec",
       description: "Removes spectators from CTF count",
       author: "Debug",
-      version: "1.0"
+      version: "1.2"
   });
 
 }();
