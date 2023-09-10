@@ -5,8 +5,18 @@
     
     let lowPings = {}
     const isBot = player => player.name.indexOf('[bot] ') === 0 && lowPings[player.id]
+    const isSpec = player => player.removedFromMap && (performance.now() - (player.lastKilled || 0)) > 3000
 
-    const prevUIUpdateScore = UI.updateScore;
+    const prevPlayersKill = Players.kill
+    Players.kill = (msg) => {
+      prevPlayersKill(msg);
+      const player = Players.get(msg.id)
+      if (player) {
+        player.lastKilled = performance.now();
+      }
+    }
+
+    const prevUIUpdateScore = UI.updateScore; 
     UI.updateScore = function(On) {
       On.scores.filter(p => p.ping <= 2).forEach(p => {
         lowPings[p.id] = true
@@ -20,7 +30,7 @@
         let Ht = 0
           , jt = 0;
         forEachPlayer(Wt=>{
-          if (!Wt.removedFromMap && !isBot(Wt) && Wt.team < 100 /*remove server*/) { // new code
+          if (!isSpec(Wt) && !isBot(Wt) && Wt.team < 100 /*remove server*/) { // new code
             1 == Wt.team ? Ht++ : jt++
           }}
         ),
@@ -46,7 +56,7 @@
       id: "remove-spec",
       description: "Removes spectators from CTF count",
       author: "Debug",
-      version: "1.3"
+      version: "1.4"
   });
 
 }();
